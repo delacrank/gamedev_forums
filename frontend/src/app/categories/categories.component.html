@@ -1,0 +1,11 @@
+<p style="padding-top: 100px">categories works!</p>
+
+
+<ul>
+  <li *ngFor="let cat of categories; let i=index">
+    <a class="nav-link" [routerLink]="['/topic/', (i + 1)]">{{ cat.name }}</a> | {{ cat.description }} | {{ categoriesCount.get("topic"+(i + 1)) }} topic Count, {{ categoriesCount.get("post"+(i + 1)) }} post Count</li>
+
+</ul>
+
+
+

@@ -1,0 +1,42 @@
+<div class = "container" style="padding-top:100px">
+  <form name="form" novalidate #f="ngForm" (ngSubmit)="f.form.valid && processForm(f)">
+
+    <!-- bio -->
+    <div class="form-group">
+      <label class = "label">Bio</label>
+      <textarea class="form-control" #bio="ngModel"
+	     name="bio" class="form-control"
+	     placeholder="Your Bio" [(ngModel)]="user.bio"
+	     minlength="4" maxlenght="200" rows="3"></textarea>
+      <div *ngIf="bio.invalid && (bio.dirty || bio.touched)"
+	   class="alert alert-danger">
+        Biography must be at least 4 characters long.</div>
+    </div>
+
+    <!-- image -->
+
+      <app-upload-files></app-upload-files>
+
+
+    <div *ngIf="error != null">
+      <div *ngIf="error.status >= 400">
+        <div class = "alert alert-danger">{{error.error.message}}</div>
+      </div>
+    </div>
+    
+    <div *ngIf="message != null">
+      <div *ngIf="message.body.message != 'Success'; else elseBlock">
+        <div class = "alert alert-danger">{{message.body.message}}</div>
+      </div>
+      <ng-template #elseBlock>
+      	<div class = "alert alert-success">{{message.body.message}}</div>
+      </ng-template>
+    </div>
+    
+     <button [disabled]="!f.form.valid" type="submit"
+	     class="btn btn-outline-dark btn-light">Submit</button>     
+  </form>
+  <br />
+</div>
+
+

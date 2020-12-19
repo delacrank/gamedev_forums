@@ -1,0 +1,6 @@
+<p style="padding-top: 100px">topic works!</p>
+
+<ul>
+  <li *ngFor="let topic of topics; let i=index"><a class="nav-link" [routerLink]="['/post/', (i +1)]">{{ topic.title }}</a> | Content {{ topic.content }}</li>
+</ul>
+
