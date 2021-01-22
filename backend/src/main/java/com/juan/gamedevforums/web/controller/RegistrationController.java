@@ -93,11 +93,11 @@ public class RegistrationController {
             final User registered = userService.registerNewUserAccount(accountDto);
 	    eventPublisher.publishEvent(new OnRegistrationCompleteEvent(registered, request.getLocale(), getAppUrl(request)));	    
         } catch(final UserAlreadyExistException uaeEx) {
-	    return new GenericResponse("user Already Exists");
+	    return new GenericResponse("user Already Exists", "userAlreadyExists");
 	} catch(final UsernameAlreadyExistException unaeEx) {
-	    return new GenericResponse("username Already Exists");
+	    return new GenericResponse("username Already Exists", "usernameAlreadyExists");
 	} catch(final RuntimeException ex) {
-		return new GenericResponse("Invalid Email");
+	    return new GenericResponse("Invalid Email", "InvalidEmail");
 	}
         return new GenericResponse("Success");
     }

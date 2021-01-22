@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { User } from "../models/user.model";
 import { UserService } from "../services/user.service";
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user',

@@ -15,6 +15,8 @@ import com.juan.gamedevforums.persistence.model.Topic;
 import com.juan.gamedevforums.persistence.dao.TopicRepository;
 import com.juan.gamedevforums.web.error.CategoriesNotFoundException;
 import com.juan.gamedevforums.web.error.TopicNotFoundException;
+import com.juan.gamedevforums.web.error.TopicAlreadyExistException;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @Service
 @Transactional
@@ -33,11 +35,8 @@ public class TopicService implements ITopicService {
     
     @Override
     public Topic findOne(Long id) {
-	Topic topic = topicRepository.findById(id).get();
-	if(topic == null) {
-	    throw new TopicNotFoundException("Topic not Found");
-	}
-	return topicRepository.findById(id).get();
+	return topicRepository.findById(id).orElseThrow(() -> new TopicNotFoundException());
+
     }
     
     @Override
@@ -54,7 +53,7 @@ public class TopicService implements ITopicService {
     public Set<Topic> findByCategories(Categories categories) {
 	Set<Topic> topic = this.topicRepository.findByCategories(categories);
 	if(topic == null || topic.isEmpty()) {
-	    throw new CategoriesNotFoundException("Category not Found");
+	    throw new TopicNotFoundException();
 	}
         return topic;
     }
@@ -70,6 +69,7 @@ public class TopicService implements ITopicService {
     }
     
     @Override
+    @PreAuthorize("hasAuthority('WRITE_PRIVILEGE')")
     public Topic save(Topic topic) {
         return topicRepository.save(topic);
     }
@@ -92,6 +92,11 @@ public class TopicService implements ITopicService {
     @Override
     public void delete(Topic topic) {
         topicRepository.delete(topic);
+    }
+
+    @Override
+    public Topic findByTitle(String title) {
+	return topicRepository.findByTitle(title).orElseThrow(() -> new TopicNotFoundException());
     }
 
 }

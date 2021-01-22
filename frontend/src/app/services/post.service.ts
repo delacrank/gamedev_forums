@@ -10,8 +10,12 @@ export class PostService {
 
   constructor(private http: HttpClient) {  }
 
-  getPostsByTopicId(id: number): Observable<Post[]> {
-    return this.http.get<Post[]>("http://localhost:8080/api/topic/" + id);
+  getPostsByTopicId(catName: string, id: number): Observable<Post[]> {
+    return this.http.get<Post[]>(`http://localhost:8080/api/forum/${catName}/${id}`);
+  }
+
+  savePost(catName: string, id: number, post: Post) {
+    return this.http.post<Post>(`http://localhost:8080/api/forum/${catName}/${id}/save`, post, { observe: 'response' });
   }
 
 }

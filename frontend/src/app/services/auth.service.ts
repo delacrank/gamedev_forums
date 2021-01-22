@@ -32,6 +32,7 @@ export class AuthService {
   authenticate(credentials, callback) {
      const headers = new HttpHeaders(credentials ? {
       authorization: 'Basic ' + btoa(credentials.email + ':' + credentials.password) } : {});
+      // headers.append("X-Requested-With", "XMLHttpRequest");
 
       this.http.get(this.usersUrl, {headers: headers}).subscribe(
 

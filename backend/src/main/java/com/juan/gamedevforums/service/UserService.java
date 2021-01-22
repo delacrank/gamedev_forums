@@ -18,7 +18,7 @@ import com.juan.gamedevforums.persistence.dao.PasswordResetTokenRepository;
 import com.juan.gamedevforums.persistence.dao.RoleRepository;
 import com.juan.gamedevforums.persistence.dao.UserRepository;
 import com.juan.gamedevforums.web.dto.UserDto;
-import com.juan.gamedevforums.web.dto.DtoConverter.ToDtoConverter;
+import com.juan.gamedevforums.web.dto.dtoConverter.ToDtoConverter;
 import com.juan.gamedevforums.web.error.UserAlreadyExistException;
 import com.juan.gamedevforums.web.error.UsernameAlreadyExistException;
 import com.juan.gamedevforums.web.error.UsernameNotFoundException;
@@ -69,12 +69,15 @@ public class UserService implements IUserService {
 
     @Override
     public User registerNewUserAccount(final UserDto accountDto) {
-        if (emailExists(accountDto.getEmail())) {
-            throw new UserAlreadyExistException("There is an account with that email address: " + accountDto.getEmail());
-        }
-	if(usernameExists(accountDto.getUsername())) {	
-            throw new UsernameAlreadyExistException("There is an account with that username: " + accountDto.getUsername());
-        }
+	
+	if(userRepository.existsByEmailIgnoreCase(accountDto.getEmail())) {
+	    throw new UserAlreadyExistException("There is an account with that username: " + accountDto.getUsername());
+	}
+
+	if(userRepository.existsByUsernameIgnoreCase(accountDto.getUsername())) {
+	    throw new UsernameAlreadyExistException("There is an account with that username: " + accountDto.getUsername());
+	}
+	
         final User user = new User();
 
         user.setUsername(accountDto.getUsername());
@@ -148,11 +151,8 @@ public class UserService implements IUserService {
 
     @Override
     public User findUserByUsername(final String username) {
-	User user = this.userRepository.findByUsername(username);
-	if(user == null ) {
-	    throw new UsernameNotFoundException("User not found");
-        }    
-        return user;
+	return userRepository.findByUsername(username)
+	    .orElseThrow(() -> new UsernameNotFoundException());
     }
     
     @Override
@@ -171,25 +171,28 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Optional<User> getUserById(final long id) {
+    public Optional<User> getUserById(final Long id) {
         return userRepository.findById(id);
-    } 
+    }
+
+    @Override
+    public User findOne(final Long id) {
+	User user = userRepository.findById(id)
+	    .orElseThrow(() -> new UsernameNotFoundException());
+	return user;
+    }
 
     @Override
     public UserDto getUserByUsername(String username) {
-	User user = this.userRepository.findByUsername(username);
-	if(user == null) {
-	    throw new UsernameNotFoundException("User not found");
-        }    
+	User user = this.userRepository.findByUsername(username)
+	    .orElseThrow(() -> new UsernameNotFoundException());	    
 	return ToDtoConverter.userToDto(user);
     }									      
 
     @Override
     public UserDto updateUserByUsername(String username, final UserDto accountDto) {
-	User user2 = this.userRepository.findByUsername(username);
-	if(user2  == null ) {
-	    throw new UsernameNotFoundException("User not found");
-        }
+        User user2 = this.userRepository.findByUsername(username)
+	    .orElseThrow(() -> new UsernameNotFoundException());
 	user2.setBio(accountDto.getBio());
 	user2.setImage(accountDto.getImage());
 	this.userRepository.save(user2);
@@ -228,14 +231,6 @@ public class UserService implements IUserService {
         // tokenRepository.delete(verificationToken);
         userRepository.save(user);
         return TOKEN_VALID;
-    }
-
-    private boolean emailExists(final String email) {
-        return userRepository.findByEmail(email) != null;
-    }
-
-    private boolean usernameExists(final String name) {
-        return userRepository.findByUsername(name) != null;
     }
 
 }

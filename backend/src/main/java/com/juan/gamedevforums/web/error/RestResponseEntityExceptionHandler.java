@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -22,6 +23,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
     // API
+    
 
     // 400
     @Override
@@ -77,12 +79,33 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
-    // @ExceptionHandler({ TopicNotFoundException.class, SQLException.class, NullPointerException.class })
-    // public ResponseEntity<Object> handleTopicSQLNotFound(final RuntimeException ex, final WebRequest request) {
-    // 	logger.error("404 Status Code", ex);
-    // 	final GenericResponse bodyOfResponse = new GenericResponse("Topic not found", "TopicNotFound");
-    //     return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
-    // }
+    @ExceptionHandler({ PostNotFoundException.class })
+    public ResponseEntity<Object> handlePostNotFound(final RuntimeException ex, final WebRequest request) {
+	logger.error("404 Status Code", ex);
+	final GenericResponse bodyOfResponse = new GenericResponse("Post not found", "PostNotFound");
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
+    @ExceptionHandler({ TopicAlreadyExistException.class })
+    public ResponseEntity<Object> handleTopicAlreadyExist(final RuntimeException ex, final WebRequest request) {
+        logger.error("409 Status Code", ex);
+        final GenericResponse bodyOfResponse = new GenericResponse("Topic already exists", "TopicAlreadyExist");
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
+    }
+
+    @ExceptionHandler({ TopicNotFoundException.class })
+    public ResponseEntity<Object> handleTopicNotFound(final RuntimeException ex, final WebRequest request) {
+    	logger.error("404 Status Code", ex);
+    	final GenericResponse bodyOfResponse = new GenericResponse("Topic not found", "TopicNotFound");
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
+    @ExceptionHandler({ AccessDeniedException.class })
+    public final ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
+    	logger.error("404 Status Code", ex);
+    	final GenericResponse bodyOfResponse = new GenericResponse("Access Denied", "AccessDenied");
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+    }
 
 
 // fix this

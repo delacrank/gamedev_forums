@@ -3,7 +3,7 @@
 
 <ul>
   <li *ngFor="let cat of categories; let i=index">
-    <a class="nav-link" [routerLink]="['/topic/', (i + 1)]">{{ cat.name }}</a> | {{ cat.description }} | {{ categoriesCount.get("topic"+(i + 1)) }} topic Count, {{ categoriesCount.get("post"+(i + 1)) }} post Count</li>
+    <a class="nav-link" [routerLink]="['/forum/', cat.name]">{{ cat.name }}</a> | {{ cat.description }} | {{ categoriesCount.get("topic"+(i + 1)) }} topic Count, {{ categoriesCount.get("post"+(i + 1)) }} post Count</li>
 
 </ul>
 

@@ -1,9 +1,17 @@
 export class Categories {
        description: string;
-       name: string;
+       private _name: string;
        private _topicCount: any;
        private _postCount: any;
        construction() {}
+
+       get name(): any {
+         return this._name;
+       }
+
+       set name(value: any) {
+         this._name = value;
+       }
 
        get topicCount(): any {
          return this._topicCount;

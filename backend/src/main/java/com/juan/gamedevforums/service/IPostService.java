@@ -1,13 +1,12 @@
 package com.juan.gamedevforums.service;
 
-import com.juan.gamedevforums.persistence.model.User;
-
 import java.util.List;
 import java.util.Set;
 
+import com.juan.gamedevforums.persistence.model.User;
 import com.juan.gamedevforums.persistence.model.Post;
 import com.juan.gamedevforums.persistence.model.Topic;
-
+import com.juan.gamedevforums.web.dto.PostDto;
 
 public interface IPostService {
     

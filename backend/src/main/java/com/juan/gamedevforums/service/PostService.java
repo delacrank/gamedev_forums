@@ -2,13 +2,16 @@ package com.juan.gamedevforums.service;
 
 import javax.transaction.Transactional;
 
-import java.util.List;
 import java.util.Set;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.juan.gamedevforums.web.error.CategoriesNotFoundException;
+import com.juan.gamedevforums.web.error.TopicNotFoundException;
+import com.juan.gamedevforums.web.error.PostNotFoundException;
 import com.juan.gamedevforums.service.TopicService;
 import com.juan.gamedevforums.service.UserService;
 import com.juan.gamedevforums.persistence.model.User;
@@ -32,7 +35,8 @@ public class PostService implements IPostService {
     @Override
     public Post findOne(Long id) {
         // todo fix optional
-        return postRepository.findById(id).get();
+        return postRepository.findById(id)
+	    .orElseThrow(() -> new PostNotFoundException());
     }
 
     @Override
@@ -67,9 +71,9 @@ public class PostService implements IPostService {
     
     @Override
     public Set<Post> findByTopic(Long id) {
-	Topic topic  = this.topicService.findOne(id);
-	if(topic == null ) {
-	    throw new CategoriesNotFoundException("Topic not Found");
+	Optional<Post> post = postRepository.findById(id);
+	if(post == null ) {
+	    throw new PostNotFoundException();
 	}
 	return findByTopic(topicService.findOne(id));
     }

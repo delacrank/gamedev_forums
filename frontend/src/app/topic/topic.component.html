@@ -1,6 +1,8 @@
 <p style="padding-top: 100px">topic works!</p>
 
+<a [routerLink]="['/forum/', categories.name, 'topic-add']" role="button" class="btn btn-primary">Add a Topic</a>
+
 <ul>
-  <li *ngFor="let topic of topics; let i=index"><a class="nav-link" [routerLink]="['/post/', (i +1)]">{{ topic.title }}</a> | Content {{ topic.content }}</li>
+  <li *ngFor="let topic of topics; let i=index"><a class="nav-link" [routerLink]="['/forum/', categories.name, (i+1)]">{{ topic.title }}</a> | Content {{ topic.content }}</li>
 </ul>
 

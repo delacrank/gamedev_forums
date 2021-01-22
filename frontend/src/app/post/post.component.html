@@ -1,5 +1,7 @@
 <p style="padding-top: 100px">post works!</p>
 
+<a [routerLink]="['/forum/', categories.name, topic.id, 'post-add']" role="button" class="btn btn-primary">Post a Reply</a>
+
 <ul>
   <li *ngFor="let post of posts">Content {{ post.content }} </li>
 </ul>

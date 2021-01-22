@@ -15,12 +15,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 public class Topic {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(unique = true, nullable = false)
+    @GeneratedValue(
+      strategy= GenerationType.IDENTITY
+    )
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)

@@ -6,6 +6,7 @@ import java.util.Set;
 import com.juan.gamedevforums.persistence.model.Categories;
 import com.juan.gamedevforums.persistence.model.User;
 import com.juan.gamedevforums.persistence.model.Topic;
+import com.juan.gamedevforums.web.dto.TopicDto;
 
 public interface ITopicService {
     
@@ -32,5 +33,7 @@ public interface ITopicService {
     void delete(Long id);
     
     void delete(Topic topic);
+
+    Topic findByTitle(String title);
 
 }

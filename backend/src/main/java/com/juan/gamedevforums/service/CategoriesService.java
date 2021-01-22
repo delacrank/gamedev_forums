@@ -30,7 +30,7 @@ public class CategoriesService implements ICategoriesService {
 
     @Override
     public Categories findByName(String name) {
-        return categoriesRepository.findByName(name);
+        return categoriesRepository.findByNameIgnoreCase(name);
     }
 
     @Override

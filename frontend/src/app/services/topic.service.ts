@@ -10,11 +10,15 @@ export class TopicService {
 
   constructor(private http: HttpClient) {  }
 
-  getTopicByName(categoryName: string): Observable<Topic[]> {
-    return this.http.get<Topic[]>("http://localhost:8080/api/categories/" + categoryName);
+  getTopicByName(catName: string): Observable<Topic[]> {
+    return this.http.get<Topic[]>(`http://localhost:8080/api/forum/${catName}`);
   }
 
-  getTopicsByCategoriesId(id: number): Observable<Topic[]> {
-    return this.http.get<Topic[]>("http://localhost:8080/api/categories/" + id);
+  getTopicsByCategoriesName(catName: string): Observable<Topic[]> {
+    return this.http.get<Topic[]>(`http://localhost:8080/api/forum/${catName}`);
+  }
+
+  saveTopic(topic: Topic, catName: string) {
+    return this.http.post<Topic>(`http://localhost:8080/api/forum/${catName}/addTopic`, topic, { observe: 'response' });
   }
 }

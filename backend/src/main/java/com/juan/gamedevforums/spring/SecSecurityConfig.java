@@ -6,6 +6,14 @@ import java.io.IOException;
 import com.juan.gamedevforums.persistence.dao.UserRepository;
 import com.juan.gamedevforums.security.CustomRememberMeServices;
 import com.juan.gamedevforums.security.CustomAuthenticationProvider;
+import com.juan.gamedevforums.security.MyBasicAuthenticationEntryPoint;
+
+import com.juan.gamedevforums.filter.CustomFilter;
+// import com.juan.gamedevforums.filter.AccessDeniedExceptionFilter;
+import com.juan.gamedevforums.security.CustomAccessDeniedHandler;
+
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +37,6 @@ import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
 
-
 @Configuration
 @Order(2)
 @ComponentScan(basePackages = { "com.juan.gamedevforums.security" })
@@ -41,7 +48,10 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService userDetailsService;
 
     @Autowired
-    private UserRepository userRepository;    
+    private UserRepository userRepository;
+
+    @Autowired
+    private MyBasicAuthenticationEntryPoint authenticationEntryPoint;
 
     public SecSecurityConfig() {
         super();
@@ -53,15 +63,10 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-    // @Override
-    // protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    // 	auth.userDetailsService(userDetailsService)
-    // 	    .passwordEncoder(encoder());
-
-    // 	 // String password = encoder().encode("password");
-    //      // auth.inMemoryAuthentication().withUser("delacrank").password(password).roles("USER");
-
-    // }
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+	return new CustomAccessDeniedHandler();
+    }	
 
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
@@ -74,9 +79,7 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(encoder());
         return authProvider;
-    }
-
-    
+    }    
 
     @Override
     public void configure(final WebSecurity web) throws Exception {
@@ -89,6 +92,7 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .csrf().disable()
             .authorizeRequests()
+
 	    // .anyRequest().authenticated()
 
 	    .antMatchers("/resources/**/","/","/registrationConfirm*", "/resetPassword*",
@@ -102,14 +106,22 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
 	    
 	    .and()
 	    .httpBasic()
-	
+	    // .and()
+	    // .exceptionHandling()
+	    .authenticationEntryPoint(authenticationEntryPoint)
+            // .accessDeniedHandler(accessDeniedHandler())
+	    
 	    .and()  
 	    .headers()
 	    .frameOptions()
-            .sameOrigin()
-	    
-	     .and()
-               .rememberMe().rememberMeServices(rememberMeServices()).key("theKey");
+            .sameOrigin();
+
+	http.addFilterAfter(new CustomFilter(),
+			    BasicAuthenticationFilter.class);
+
+
+	     // .and()
+             //   .rememberMe().rememberMeServices(rememberMeServices()).key("theKey");
 
     // @formatter:on
     }

@@ -1,0 +1,49 @@
+<div class = "container" style="padding-top:100px">
+  <form name="form" novalidate #f="ngForm" (ngSubmit)="f.form.valid && processForm(f)">
+
+    <!-- name -->
+    <div class="form-group">
+      <label class = "label">Title</label>
+      <input type="text" #title="ngModel"
+	     name="title" class="form-control"
+	     placeholder="Your Name" [(ngModel)]="topic.title"
+	     required minlength="4">
+      <div *ngIf="title.invalid && (title.dirty || title.touched)"
+	   class="alert alert-danger">
+        Title required and must be at least 4 characters long.</div>
+    </div>
+
+    <!-- password -->
+    <div class="form-group">
+      <label class = "label">Content</label>
+      <textarea #content="ngModel"
+		name="content" class="form-control"
+		rows="3"
+	        placeholder="Your Content" [(ngModel)]="topic.content"
+		required minlength="8">
+      </textarea>
+      <div *ngIf="content.invalid && (content.dirty || content.touched)"
+	   class="alert alert-danger">
+	Must contain at least 8 or more characters.</div>
+    </div>
+
+      <div *ngIf="error != null">
+	<div *ngIf="error.status >= 400">
+          <div class = "alert alert-danger">{{error.error.message}}</div>
+      	</div>
+      </div>
+      
+      <div *ngIf="message != null">
+      	<div *ngIf="message.body.message != 'Success'; else elseBlock">
+         <div class = "alert alert-danger">{{message.body.message}}</div>
+      	</div>
+      	<ng-template #elseBlock>
+      	  <div class = "alert alert-success">{{message.body.message}}</div>
+      	</ng-template>
+      </div>
+      
+      <button [disabled]="!f.form.valid" type="submit"
+	      class="btn btn-outline-dark btn-light">Submit</button>    
+  </form>
+</div>
+

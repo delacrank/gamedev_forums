@@ -29,7 +29,7 @@ import com.juan.gamedevforums.service.ITopicService;
 import com.juan.gamedevforums.service.IPostService;
 
 @RestController
-@RequestMapping("/api/categories/")
+@RequestMapping("/api/forum/")
 @CrossOrigin(origins="http://localhost:4200")
 public class CategoriesController {
       
@@ -47,15 +47,15 @@ public class CategoriesController {
       return new ResponseEntity<List>(categoriesService.findAll(), HttpStatus.OK);
     }
     
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getTopicsFromCategories(@PathVariable final Long id) {
+    @GetMapping("/{catName}")
+    public ResponseEntity<?> getTopicsFromCategories(@PathVariable final String catName) {
 	try {
-	  topicService.findByCategories(id);
+	  topicService.findByCategories(catName);
 	} catch (final CategoriesNotFoundException cnfe) {
 	    GenericResponse message = new GenericResponse("Category not found", "CategoryNotFound");
 	    return new ResponseEntity<GenericResponse>(message, HttpStatus.NOT_FOUND);
 	} 	
-	return new ResponseEntity<>(topicService.findByCategories(id), HttpStatus.OK);
+	return new ResponseEntity<>(topicService.findByCategories(catName), HttpStatus.OK);
     }
 
     @GetMapping("/topic-count/{categoriesId}")

@@ -10,11 +10,12 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
 import { UpdatePasswordComponent } from './update-password/update-password.component';
 import { UserComponent } from './user/user.component';
 import { TopicComponent } from './topic/topic.component';
+import { TopicAddComponent } from './topic/topic-add/topic-add.component';
 import { PostComponent } from './post/post.component';
+import { PostAddComponent } from './post/post-add/post-add.component';
 import { UserEditComponent } from './user/user-edit/user-edit.component';
 import { AuthGuardService } from './services/auth-guard.service';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-
 
 const routes: Routes = [
  { path: '', component: HomeComponent },
@@ -28,8 +29,10 @@ const routes: Routes = [
  { path: 'updatePassword', component: UpdatePasswordComponent },
  { path: 'user/:username', component: UserComponent },
  { path: 'user/:username/edit', component: UserEditComponent, canActivate: [AuthGuardService] },
- { path: 'topic/:id', component: TopicComponent },
- { path: 'post/:id', component: PostComponent },
+ { path: 'forum/:category', component: TopicComponent },
+ { path: 'forum/:category/topic-add', component: TopicAddComponent },
+ { path: 'forum/:category/:topic-id', component: PostComponent },
+ { path: 'forum/:category/:topic-id/post-add', component: PostAddComponent },
  { path: '**', component: PageNotFoundComponent }
  ];
 

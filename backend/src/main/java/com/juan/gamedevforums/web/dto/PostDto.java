@@ -8,11 +8,11 @@ import com.juan.gamedevforums.persistence.model.Topic;
 public class PostDto {
 
     public PostDto(Long id, Topic topic,
-		   User user, String content,
+		   UserDto userDto, String content,
 		   Date creationDate, Date lastUpdateDate) {
 	this.id = id;
 	this.topic = topic;
-	this.user = user;
+	this.userDto = userDto;
 	this.content = content;
 	this.creationDate = creationDate;
 	this.lastUpdateDate = lastUpdateDate;
@@ -29,6 +29,8 @@ public class PostDto {
     private Date creationDate;
 
     private Date lastUpdateDate;
+
+    private UserDto userDto;
 
    public Long getId() {
         return id;

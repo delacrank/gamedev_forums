@@ -14,14 +14,14 @@ export class CategoriesService {
   constructor(private http: HttpClient) { }
 
   getCategories(): Observable<Categories[]> {
-    return this.http.get<Categories[]>("http://localhost:8080/api/categories/");
+    return this.http.get<Categories[]>("http://localhost:8080/api/forum/");
   }
 
   getCategoriesCountByTopic(categoriesId: number) {
-    return this.http.get("http://localhost:8080/api/categories/topic-count/" + categoriesId);
+    return this.http.get("http://localhost:8080/api/forum/topic-count/" + categoriesId);
   }
 
   getCategoriesCountByPost(categoriesId: number) {
-    return this.http.get("http://localhost:8080/api/categories/post-count/" + categoriesId);
+    return this.http.get("http://localhost:8080/api/forum/post-count/" + categoriesId);
   }
 }

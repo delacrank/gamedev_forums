@@ -82,6 +82,7 @@ public class User {
 	this.username = username;
     }
 
+    @JsonIgnore 
     public String getPassword() {
 	return password;
     }
@@ -98,6 +99,7 @@ public class User {
 	this.enabled = enabled;
     }
 
+    @JsonIgnore 
     public String getSecret() {
 	return secret;
     }
@@ -128,6 +130,32 @@ public class User {
 
     public void setBio(String bio) {
 	this.bio = bio;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = (prime * result) + ((getEmail() == null) ? 0 : getEmail().hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final User user = (User) obj;
+        if (!getEmail().equals(user.getEmail())) {
+            return false;
+        }
+        return true;
     }
 
     @Override

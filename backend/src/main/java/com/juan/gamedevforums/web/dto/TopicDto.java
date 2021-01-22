@@ -10,7 +10,8 @@ public class TopicDto {
     public TopicDto(Long id, User user, Categories categories,
 		    String title, String content,
 		    int views, Date creationDate,
-		    Date lastUpdateDate, boolean closed) {
+		    Date lastUpdateDate, boolean closed,
+		    UserDto userDto) {
 	this.user = user;
 	this.categories = categories;
 	this.title = title;
@@ -19,6 +20,7 @@ public class TopicDto {
 	this.creationDate = creationDate;
 	this.lastUpdateDate = lastUpdateDate;
 	this.closed = closed;
+	this.userDto = userDto;
     }
 
     private Long id;
@@ -38,6 +40,8 @@ public class TopicDto {
     private Date lastUpdateDate;
 
     private boolean closed;
+
+    private UserDto userDto;
 
     public Long getId() {
         return id;
@@ -101,6 +105,6 @@ public class TopicDto {
 
     public void setClosed(boolean closed) {
         this.closed = closed;
-    }
+    }    
 }
     

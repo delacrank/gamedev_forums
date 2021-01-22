@@ -39,7 +39,9 @@ public interface IUserService {
 
     Optional<User> getUserByPasswordResetToken(String token);
 
-    Optional<User> getUserById(long id);
+    Optional<User> getUserById(Long id);
+
+    User findOne(Long id);
 
     UserDto getUserByUsername(String username);
 
