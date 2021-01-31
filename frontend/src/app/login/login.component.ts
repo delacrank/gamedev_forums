@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from "../models/user.model";
+import { UserMapper } from "../models/user-mapper.model";
 import { AuthService } from "../services/auth.service";
 import { Router } from '@angular/router';
 
@@ -23,6 +24,7 @@ export class LoginComponent implements OnInit {
 	    console.log(this.authService.currentAuthentication);
 	    this.authService.authenticate(this.user, 
 	    () => {
+	         sessionStorage.setItem('token', btoa(this.user.email + ':' + this.user.password));
 	    	 this.router.navigate(['/user/' + this.username]);
 	    });
 	    this.error = false;
@@ -34,6 +36,8 @@ export class LoginComponent implements OnInit {
       return this.authService.username;
     }
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+      sessionStorage.setItem('token', '');    		
+    }
 }
 

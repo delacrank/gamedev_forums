@@ -1,12 +1,12 @@
 export class User {
-       private _username: string;
+       private _username?: string;
        matchingPassword?: string;
-       oldPassword: string;
-       newPassword: string;
+       oldPassword?: string;
+       newPassword?: string;
        password: string;
-       token: string;
-       image: any;
-       bio: string;
+       token?: string;
+       image?: any;
+       bio?: string;
        email: string;       
 
        constructor(){  }

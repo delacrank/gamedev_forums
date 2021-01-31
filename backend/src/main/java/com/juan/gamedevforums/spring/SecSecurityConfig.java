@@ -9,7 +9,7 @@ import com.juan.gamedevforums.security.CustomAuthenticationProvider;
 import com.juan.gamedevforums.security.MyBasicAuthenticationEntryPoint;
 
 import com.juan.gamedevforums.filter.CustomFilter;
-// import com.juan.gamedevforums.filter.AccessDeniedExceptionFilter;
+import com.juan.gamedevforums.filter.AccessDeniedExceptionFilter;  
 import com.juan.gamedevforums.security.CustomAccessDeniedHandler;
 
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
@@ -91,33 +91,33 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
         // @formatter:off
         http
             .csrf().disable()
-            .authorizeRequests()
-
-	    // .anyRequest().authenticated()
+            .authorizeRequests()	    
 
 	    .antMatchers("/resources/**/","/","/registrationConfirm*", "/resetPassword*",
 	    		 "/home*","/successfulRegistrarion*", "/badUser*",
 	    		 "/pageNotFound*","index.html","/login","/user",
 	    		 "/logout", "/h2-console/**").permitAll()
+	    .antMatchers("/api/forum/{catName}/addTopic/").hasAuthority("WRITE_PRIVILEGE")
+	    
  	    .and()
 	    .formLogin()
 	    .loginPage("/login")
 	    .permitAll()
 	    
 	    .and()
-	    .httpBasic()
-	    // .and()
-	    // .exceptionHandling()
+	    .httpBasic()      
 	    .authenticationEntryPoint(authenticationEntryPoint)
-            // .accessDeniedHandler(accessDeniedHandler())
+            // 
 	    
 	    .and()  
 	    .headers()
 	    .frameOptions()
             .sameOrigin();
 
+	// http.addFilterBefore(BasicAuthenticationFilter.class, AccessDeniedExceptionFilter.class);
 	http.addFilterAfter(new CustomFilter(),
 			    BasicAuthenticationFilter.class);
+	
 
 
 	     // .and()

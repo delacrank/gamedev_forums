@@ -31,23 +31,6 @@ import { PostComponent } from './post/post.component';
 import { TopicAddComponent } from './topic/topic-add/topic-add.component';
 import { PostAddComponent } from './post/post-add/post-add.component';
 
-import { Injectable } from '@angular/core';
-import {
-  HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HTTP_INTERCEPTORS
-} from '@angular/common/http';
-
-// Suppress pop up box from failed login
-@Injectable()
-export class XhrInterceptor implements HttpInterceptor {
-
-  intercept(req: HttpRequest<any>, next: HttpHandler) {
-    const xhr = req.clone({
-      headers: req.headers.set('X-Requested-With', 'XMLHttpRequest')
-    });
-    return next.handle(xhr);
-  }
-}
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -78,7 +61,7 @@ export class XhrInterceptor implements HttpInterceptor {
     HttpClientModule,
     AppRoutingModule,
   ],
-  providers: [ AuthService, { provide: HTTP_INTERCEPTORS, useClass: XhrInterceptor, multi: true }, UserService, CategoriesService, UploadFileService, AuthGuardService ],
+  providers: [ AuthService, UserService, CategoriesService, UploadFileService, AuthGuardService ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

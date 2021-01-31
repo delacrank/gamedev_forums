@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { User } from "../models/user.model";
-import { Register } from "../models/register.model";
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -11,7 +10,6 @@ export class UserService {
   private usersUrl = "/api/user";
 
   private user: User;
-  private register: Register;
 
   constructor(private http: HttpClient) {
     this.user = new User();
@@ -22,11 +20,11 @@ export class UserService {
   }
 
   updateUser(username: string, user: User) {    
-    return this.http.put<User>("http://localhost:8080/api/user/" + username + "/edit", user, {observe: 'response' });
+    return this.http.put<User>("http://localhost:8080/api/user/userprofile/" + username + "/edit", user, {observe: 'response' });
   }
 
-  saveUser(register: Register) {
-    return this.http.post<User>(this.usersUrl + "/registration", register, { observe: 'response' });
+  saveUser(user: User) {
+    return this.http.post<User>(this.usersUrl + "/registration", user, { observe: 'response' });
   }
 
   resetUserPass(user: any) {

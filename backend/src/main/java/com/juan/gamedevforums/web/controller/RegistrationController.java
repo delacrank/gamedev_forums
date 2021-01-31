@@ -42,8 +42,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.validation.constraints.NotNull;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import java.security.Principal;
 
+import java.security.Principal;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
@@ -83,7 +83,7 @@ public class RegistrationController {
     public Principal user(Principal user){
         return user;
     }
-
+    
     // Registration
     @PostMapping(value="/registration")
     public GenericResponse registerUserAccount(@Valid @RequestBody final UserDto accountDto,

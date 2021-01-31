@@ -26,22 +26,23 @@ export class PostAddComponent implements OnInit {
     if(f.valid) {
       console.log("post content: " + this.post.content);
       this.postService.savePost(this.catName, this.post.id, this.post).subscribe(
-       res => {
-         if(res?.status == 200) {
-           console.log(res);
-	   this.message = res;
-	 } else {
-	   this.message = "";
-	 }
+       response => {
+         if(response?.status == 200) {
+           console.log(response);
+       	  this.message = response;
+       	 } else {
+       	   this.message = "";
+       	 }
        },
        err => {
          if(err?.status >= 400) {
-	   console.log(err);
-	   this.error = err;
-	 } else {
-	   this.error = {};
-	 }
-       });
+       	   console.log(err);
+       	   this.error = err;
+       	 } else {
+       	   this.error = {};
+       	 }
+       }
+       );
      }
   }
 

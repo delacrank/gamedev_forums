@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from "../../models/user.model";
+import { UserMapper } from "../../models/user-mapper.model";
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { UserService } from "../../services/user.service";
 
@@ -13,18 +14,19 @@ export class UserEditComponent implements OnInit {
   public error: any;
   public message: any;
   user: User;
+  userMapper: UserMapper;
     
   constructor(
     private route: ActivatedRoute,
     private userService: UserService) {
     this.user = new User();
+    this.userMapper = new UserMapper();    
   }
 
   processForm(f) {
     
     if(f.valid) {
-    console.log(this.user);
-    console.log(this.user.bio);
+      this.user = this.userMapper.mapUser(this.user);
 
     this.userService.updateUser(this.user.username, this.user).subscribe(
       res => {

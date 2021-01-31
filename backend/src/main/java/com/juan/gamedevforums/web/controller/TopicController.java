@@ -20,7 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.access.AccessDeniedException;
 
 import com.juan.gamedevforums.web.error.TopicNotFoundException;
@@ -78,13 +78,14 @@ public class TopicController {
 	topicService.save(topic);
 	return new ResponseEntity<>(postService.findByTopic(id), HttpStatus.OK);
     }
-
+    
     @PostMapping("/{catName}/addTopic")
     public ResponseEntity<?> addTopic(
 				     @Valid @RequestBody final TopicDto newTopicDto,
 				     @PathVariable final String catName,
 				     Authentication authentication)
     {
+
 	try {
 	    topicService.findByCategories(catName);
 	} catch (final CategoriesNotFoundException cnfe) {
@@ -99,7 +100,7 @@ public class TopicController {
 	    GenericResponse message = new GenericResponse("Invalid Credentials", "InvalidCredentials");
 	    return new ResponseEntity<GenericResponse>(message, HttpStatus.FORBIDDEN);
 	}
-	
+
 	try {
 	    Topic topic = new Topic();
 	    topic.setUser(user);
