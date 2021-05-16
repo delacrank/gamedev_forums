@@ -5,20 +5,9 @@ import java.security.Principal;
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
-import com.juan.gamedevforums.web.error.UserAlreadyExistException;
-import com.juan.gamedevforums.web.error.UsernameAlreadyExistException;
-import com.juan.gamedevforums.web.error.UsernameNotFoundException;
-import com.juan.gamedevforums.persistence.model.User;
-
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import com.juan.gamedevforums.persistence.model.UserProfile;
-import com.juan.gamedevforums.service.IUserProfileService;
-import com.juan.gamedevforums.service.IUserService;
-import com.juan.gamedevforums.web.dto.PasswordDto;
-import com.juan.gamedevforums.web.dto.UserDto;
-import com.juan.gamedevforums.web.util.GenericResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -27,11 +16,31 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.AuthenticationManager; 
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import com.juan.gamedevforums.web.error.UserAlreadyExistException;
+import com.juan.gamedevforums.web.error.UsernameAlreadyExistException;
+import com.juan.gamedevforums.web.error.UsernameNotFoundException;
+import com.juan.gamedevforums.persistence.model.User;
+
+import com.juan.gamedevforums.persistence.model.UserProfile;
+import com.juan.gamedevforums.service.IUserProfileService;
+import com.juan.gamedevforums.service.IUserService;
+import com.juan.gamedevforums.web.dto.PasswordDto;
+import com.juan.gamedevforums.web.dto.UserDto;
+import com.juan.gamedevforums.web.dto.AuthDto;
+import com.juan.gamedevforums.web.util.GenericResponse;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import com.juan.gamedevforums.security.MyUserDetailsService;
 import com.juan.gamedevforums.web.error.StorageFileNotFoundException;
 import com.juan.gamedevforums.storage.StorageService;
-import org.springframework.security.access.prepost.PreAuthorize;
+import com.juan.gamedevforums.web.util.JwtTokenUtil;
+import com.juan.gamedevforums.web.util.JwtResponse;
 
 @RestController
 @RequestMapping("/api/user")
@@ -39,9 +48,15 @@ import org.springframework.security.access.prepost.PreAuthorize;
 public class UserController {
     
     private StorageService storageService; 
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
     
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private MyUserDetailsService userDetailsService;
 
     @Autowired
     private IUserProfileService userProfileService;
@@ -49,45 +64,45 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // @RequestMapping("/login")
-    // public boolean login(@RequestBody final UserDto userDto) {
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
-    // 	final User user2;
-    // 	try {
-    // 	    user2 = userService.findUserByUsername(userDto.getUsername());
-    // 	} catch(final UsernameNotFoundException unfe) {
-    // 	    return false;
-    // 	}
-    //     return userDto.getUsername().equals(user2.getUsername()) && passwordEncoder.matches(userDto.getPassword(), user2.getPassword());
-    // }
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody final AuthDto authDto ) {
+	try {
+	    final Authentication authentication =  authenticationManager.authenticate(
+			      new UsernamePasswordAuthenticationToken(
+						      authDto.getEmail(),
+						      authDto.getPassword()
+			      )
+            );
+	    SecurityContextHolder.getContext().setAuthentication(authentication);	
+	} catch (BadCredentialsException ex) {
+	    GenericResponse message = new GenericResponse("Invalid Credentials", "InvalidCredentials");
+	    return new ResponseEntity<GenericResponse>(message, HttpStatus.FORBIDDEN);
+	}
 
-    // @RequestMapping()
-    // public Principal user(HttpServletRequest request) {
-    //     String authToken = request.getHeader("Authorization")
-    //       .substring("Basic".length()).trim();
-    //     return () ->  new String(Base64.getDecoder()
-    //       .decode(authToken)).split(":")[0];
-    // }
+	final UserDetails userDetails = userDetailsService.loadUserByUsername(authDto.getEmail());
+	final String jwt = jwtTokenUtil.generateToken(userDetails);
+	return ResponseEntity.ok(new JwtResponse(jwt));
+    }
     
     @GetMapping("/{username}")
-    public ResponseEntity<?> getUserProfile(
-					    @PathVariable final String username,
-					    Authentication authentication)
+    public ResponseEntity<?> getUserByUsername(@PathVariable final String username)
     {
 	try {
-	    userProfileService.findOne(username);
+	    userService.getUserByUsername(username);
 	} catch (final UsernameNotFoundException unfe) {
 	    GenericResponse message = new GenericResponse("User not found", "UsernameNotFound");
 	    return new ResponseEntity<GenericResponse>(message, HttpStatus.NOT_FOUND);
 	}
-	return new ResponseEntity<>(userProfileService.findOne(username), HttpStatus.OK);
+	return new ResponseEntity<>(userService.getUserByUsername(username), HttpStatus.OK);
     }
 		
-    @GetMapping("/userprofile/{username}")
-    public ResponseEntity<?> getUserByUsername(@PathVariable final String username,
-					       Authentication authentication)
+    @GetMapping("/userprofile")
+    public ResponseEntity<?> getUserProfile(Authentication authentication)
     {
-	System.out.println(((User) authentication.getPrincipal()).getRoles());
+        String username = ((User)authentication.getPrincipal()).getUsername();
 	try {
 	  userService.getUserByUsername(username);
 	} catch (final UsernameNotFoundException unfe) {
@@ -95,44 +110,21 @@ public class UserController {
 	    return new ResponseEntity<GenericResponse>(message, HttpStatus.NOT_FOUND);
 	} 	
 
-	String authUsername = ((User) authentication.getPrincipal()).getUsername();
-
-	if(username.equals(authUsername)) {
-	    try {
-		userService.getUserByUsername(username);
-	    } catch (AccessDeniedException ade) {
-		GenericResponse message = new GenericResponse("Auth Error", "Auth Error");
-		return new ResponseEntity<GenericResponse>(message, HttpStatus.FORBIDDEN);
-	    }
-	    return new ResponseEntity<>(userService.getUserByUsername(username), HttpStatus.OK);
-	}
-	return new ResponseEntity<>("Invalid credentials", HttpStatus.FORBIDDEN);	    
+       return new ResponseEntity<>(userService.getUserByUsername(username), HttpStatus.OK);     
     }
 
-    @PutMapping("/userprofile/{username}/edit")
+    @PutMapping("/userprofile/edit")
     public ResponseEntity<?> updateUserByUsername(
-		    @PathVariable final String username,		    
 		    @RequestBody final UserDto accountDto,
                     Authentication authentication)
     {
+	String username2 = ((User)authentication.getPrincipal()).getUsername();
 	try {
-	    userService.getUserByUsername(username);
+	    userService.updateUserByUsername(username2, accountDto);
 	} catch (final UsernameNotFoundException unfe) {
-	    GenericResponse message = new GenericResponse("User not found", "UserNotFound");
+	    GenericResponse message = new GenericResponse("Username not found", "UsernameNotFound");
 	    return new ResponseEntity<GenericResponse>(message, HttpStatus.NOT_FOUND);
 	}
-
-	String authUsername = ((User) authentication.getPrincipal()).getUsername();
-
-	if(username.equals(authUsername)) {
-	    try {
-		userService.updateUserByUsername(username, accountDto);
-	    } catch (AccessDeniedException ade) {
-		GenericResponse message = new GenericResponse("Auth Error", "Auth Error");
-		return new ResponseEntity<GenericResponse>(message, HttpStatus.FORBIDDEN);
-	    }
-	    return new ResponseEntity<>("Success", HttpStatus.OK);
-	} 
-	return new ResponseEntity<>("Invalid credentials", HttpStatus.FORBIDDEN);	    
+	return new ResponseEntity<>("Success", HttpStatus.OK);    
     }    
 }

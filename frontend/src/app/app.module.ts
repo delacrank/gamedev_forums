@@ -15,6 +15,7 @@ import { CategoriesService } from "./services/categories.service";
 import { TopicService } from "./services/topic.service";
 import { UploadFileService } from "./services/upload-file.service";
 import { AuthGuardService } from "./services/auth-guard.service";
+import { TokenService } from "./services/token.service";
 import { LoginComponent } from './login/login.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { BadUserComponent } from './bad-user/bad-user.component';
@@ -30,6 +31,7 @@ import { TopicComponent } from './topic/topic.component';
 import { PostComponent } from './post/post.component';
 import { TopicAddComponent } from './topic/topic-add/topic-add.component';
 import { PostAddComponent } from './post/post-add/post-add.component';
+
 
 @NgModule({
   declarations: [
@@ -61,7 +63,7 @@ import { PostAddComponent } from './post/post-add/post-add.component';
     HttpClientModule,
     AppRoutingModule,
   ],
-  providers: [ AuthService, UserService, CategoriesService, UploadFileService, AuthGuardService ],
+  providers: [ AuthService, UserService, CategoriesService, UploadFileService, TokenService, AuthGuardService ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

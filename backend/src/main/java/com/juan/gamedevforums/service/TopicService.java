@@ -53,8 +53,8 @@ public class TopicService implements ITopicService {
     public Set<Topic> findByCategories(Categories categories) {
 	Set<Topic> topic = this.topicRepository.findByCategories(categories);
 	if(topic == null || topic.isEmpty()) {
-	    throw new TopicNotFoundException();
-	}
+	    throw new NullPointerException();
+	} 		   
         return topic;
     }
     

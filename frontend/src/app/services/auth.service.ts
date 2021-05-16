@@ -1,23 +1,23 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { User } from "../models/user.model";
-import { BehaviorSubject } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { TokenService } from "../services/token.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private usersUrl = "/api/user";
-  private _authenticated = false;
-  private authenticatedSource = new BehaviorSubject<boolean>(false);
-  currentAuthentication = this.authenticatedSource.asObservable();
+  private _authenticated;
 
   user: User;
 
   constructor(
      private router: Router,
-     private http: HttpClient) {
+     private http: HttpClient,
+     private token: TokenService) {
      this.user = new User();
   }
 
@@ -29,24 +29,18 @@ export class AuthService {
     return this.user.username;
   }
 
-  authenticate(credentials, callback) {
-      const headers = new HttpHeaders(credentials ? {
-      authorization: 'Basic ' + btoa(credentials.email + ':' + credentials.password) } : {});
-      this.http.get(this.usersUrl, {headers: headers}).subscribe(
+  authenticate(credentials): Observable<any> {
+    console.log('generating token');
+    return this.http.post("http://localhost:8080/api/user/login", credentials ).pipe(
+      catchError((error: HttpErrorResponse) => {
+          return throwError(error || 'Error');
+	})
+      );
+  }
 
-      response => {
-        if(response !== null) {
-          if(response['name']) {	    
-            this.authenticated = true;
-	    this.changeSource(true);
-    	    this.username = response['principal'].username;
-          } else {
-            this.authenticated = false;
-	    this.changeSource(false);
-          }
-        }
-        return callback && callback();
-     });
+  logout() {
+    this.authenticated = false;
+    console.log(this.authenticated);
   }
 
   get authenticated(): boolean {
@@ -57,7 +51,7 @@ export class AuthService {
     this._authenticated = val;
   }
 
-  changeSource(val: boolean) {
-    this.authenticatedSource.next(val);
+  isAuthenticated() {
+    return this.token.getToken() != null;
   }
 }

@@ -23,6 +23,7 @@ import com.juan.gamedevforums.security.ISecurityUserService;
 import com.juan.gamedevforums.service.IUserService;
 import com.juan.gamedevforums.web.dto.PasswordDto;
 import com.juan.gamedevforums.web.dto.UserDto;
+import com.juan.gamedevforums.web.dto.AuthDto;
 import com.juan.gamedevforums.web.error.InvalidOldPasswordException;
 import com.juan.gamedevforums.web.util.GenericResponse;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -56,7 +57,7 @@ import java.util.UUID;
 @CrossOrigin(origins="http://localhost:4200")
 public class RegistrationController {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-
+    
     @Autowired
     private IUserService userService;
 
@@ -79,11 +80,11 @@ public class RegistrationController {
         super();
     }
 
-    @RequestMapping()
-    public Principal user(Principal user){
-        return user;
-    }
-    
+    // @RequestMapping()
+    // public Principal user(Principal user){
+    //     return user;
+    // }
+	    
     // Registration
     @PostMapping(value="/registration")
     public GenericResponse registerUserAccount(@Valid @RequestBody final UserDto accountDto,

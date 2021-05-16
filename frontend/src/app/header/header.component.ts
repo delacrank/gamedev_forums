@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { finalize } from "rxjs/operators";
 import { pipe } from 'rxjs';
 import { User } from '../models/user.model';
+import { TokenService } from "../services/token.service";
 
 @Component({
   selector: 'app-header',
@@ -18,10 +19,10 @@ export class HeaderComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private http: HttpClient,
-    private router: Router)
+    private router: Router,
+    private token: TokenService)
   {
    this.user = new User();
-   this.authService.authenticate(undefined, undefined);
   }
 
   toggleCollapsed(): void {
@@ -29,17 +30,12 @@ export class HeaderComponent implements OnInit {
   }
 
   logout() {
-     this.http.post('http://localhost:8080/logout', {}).pipe(
-     finalize(() => {
-         sessionStorage.removeItem('token');
-	 this.authService.authenticated = false;
-	 this.authService.changeSource(false);
-	 this.router.navigate(['/login']);
-     })).subscribe();
+     this.authService.authenticated = false;
+     this.token.removeToken();
   }
 
   get authenticated(): boolean {
-    return this.authService.authenticated;
+    return this.authService.isAuthenticated();
   }
 
   get username(): string {

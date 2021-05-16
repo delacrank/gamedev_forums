@@ -25,9 +25,9 @@
 	Password required and must be at least 4 characters long.</div>
     </div>
 
-     <div [hidden]="error" class = "alert alert-danger">
-	  Invalid email or password or account not registered
-    </div>
+    <div *ngIf="error != null">
+        <div class = "alert alert-danger">{{error}}</div>
+    </div>      
     
      <button [disabled]="!f.form.valid" type="submit"
 	     class="btn btn-outline-dark btn-light">Submit</button>     

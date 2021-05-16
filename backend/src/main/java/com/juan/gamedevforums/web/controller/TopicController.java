@@ -73,9 +73,9 @@ public class TopicController {
 	    GenericResponse message = new GenericResponse("topic not found", "TopicNotFound");
 	    return new ResponseEntity<GenericResponse>(message, HttpStatus.NOT_FOUND);
 	}
-	Topic topic = topicService.findOne(id);
-	topic.setViews(topic.getViews() + 1);
-	topicService.save(topic);
+	// Topic topic = topicService.findOne(id);
+	// topic.setViews(topic.getViews() + 1);
+	// topicService.save(topic);
 	return new ResponseEntity<>(postService.findByTopic(id), HttpStatus.OK);
     }
     

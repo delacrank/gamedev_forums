@@ -8,9 +8,8 @@ import com.juan.gamedevforums.security.CustomRememberMeServices;
 import com.juan.gamedevforums.security.CustomAuthenticationProvider;
 import com.juan.gamedevforums.security.MyBasicAuthenticationEntryPoint;
 
-import com.juan.gamedevforums.filter.CustomFilter;
-import com.juan.gamedevforums.filter.AccessDeniedExceptionFilter;  
 import com.juan.gamedevforums.security.CustomAccessDeniedHandler;
+import com.juan.gamedevforums.filter.JwtRequestFilter;
 
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -36,6 +35,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @Order(2)
@@ -52,6 +53,9 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private MyBasicAuthenticationEntryPoint authenticationEntryPoint;
+
+    @Autowired
+    private JwtRequestFilter jwtRequestFilter;
 
     public SecSecurityConfig() {
         super();
@@ -91,39 +95,40 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
         // @formatter:off
         http
             .csrf().disable()
-            .authorizeRequests()	    
-
-	    .antMatchers("/resources/**/","/","/registrationConfirm*", "/resetPassword*",
-	    		 "/home*","/successfulRegistrarion*", "/badUser*",
-	    		 "/pageNotFound*","index.html","/login","/user",
-	    		 "/logout", "/h2-console/**").permitAll()
-	    .antMatchers("/api/forum/{catName}/addTopic/").hasAuthority("WRITE_PRIVILEGE")
-	    
- 	    .and()
-	    .formLogin()
-	    .loginPage("/login")
-	    .permitAll()
-	    
+    	    .sessionManagement()
+	    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 	    .and()
-	    .httpBasic()      
-	    .authenticationEntryPoint(authenticationEntryPoint)
-            // 
-	    
+            .authorizeRequests()
+	    .mvcMatchers("/styles.d149a1df7e8e5419b3ce.css",
+			 "/runtime-es2015.66c79b9d36e7169e27b0.js",
+			 "/polyfills-es2015.6022d6f28e0500e60d30.js",
+			 "/main-es2015.68b92204faaab74036c2.js",
+			 "/main-es2015.d11dfd837502fdfe5b20.js",
+			 "/favicon.ico",
+	    		 "/index.html", "/",
+			 "/api/user/login",
+			 "/api/user/registration",
+			 "/api/user/registrationConfirm*",
+			 "/api/forum/**",
+ 			 "/api/forum/{catName}/**",
+			 "/api/forum/post-count/**",
+ 			 "/api/forum/topic-count/**",
+			 "/h2-console/**").permitAll()
+	    .mvcMatchers("/api/user/userprofile").hasAuthority("WRITE_PRIVILEGE")
+    	    .mvcMatchers("/api/user/userprofile/edit").hasAuthority("WRITE_PRIVILEGE")
+	    .mvcMatchers("/api/forum/{catName}/addTopic").hasAuthority("WRITE_PRIVILEGE")
+	    .anyRequest().authenticated()
+	        
 	    .and()  
 	    .headers()
 	    .frameOptions()
-            .sameOrigin();
+            .sameOrigin();	    
 
-	// http.addFilterBefore(BasicAuthenticationFilter.class, AccessDeniedExceptionFilter.class);
-	http.addFilterAfter(new CustomFilter(),
-			    BasicAuthenticationFilter.class);
+	http.addFilterAfter(jwtRequestFilter,
+			    UsernamePasswordAuthenticationFilter.class);
 	
-
-
 	     // .and()
              //   .rememberMe().rememberMeServices(rememberMeServices()).key("theKey");
-
-    // @formatter:on
     }
 
     @Bean

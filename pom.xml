@@ -7,7 +7,10 @@
 	<artifactId>gamedevforums-parent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-  
+
+	<properties>
+	  <org.springframework.version>5.3.5.RELEASE</org.springframework.version>
+	</properties>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>

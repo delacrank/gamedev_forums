@@ -54,7 +54,10 @@ public class CategoriesController {
 	} catch (final CategoriesNotFoundException cnfe) {
 	    GenericResponse message = new GenericResponse("Category not found", "CategoryNotFound");
 	    return new ResponseEntity<GenericResponse>(message, HttpStatus.NOT_FOUND);
-	} 	
+	}  catch (NullPointerException e) {
+	    GenericResponse message = new GenericResponse("Category not found", "CategoryNotFound");
+	    return new ResponseEntity<GenericResponse>(message, HttpStatus.NOT_FOUND);
+	}
 	return new ResponseEntity<>(topicService.findByCategories(catName), HttpStatus.OK);
     }
 

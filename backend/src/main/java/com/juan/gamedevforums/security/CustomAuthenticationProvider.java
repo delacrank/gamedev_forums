@@ -2,7 +2,7 @@ package com.juan.gamedevforums.security;
 
 import com.juan.gamedevforums.persistence.dao.UserRepository;
 import com.juan.gamedevforums.persistence.model.User;
-// import org.jboss.aerogear.security.otp.Totp;
+// import org.jboss.aerogear.security.otp.Top;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
